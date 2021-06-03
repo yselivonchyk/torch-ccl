@@ -1,4 +1,4 @@
-set(CCL_SRCS init.cpp ProcessGroupCCL.cpp cpu/cpu_ccl.cpp dispatch_stub.cpp utils.cpp)
+set(CCL_SRCS init.cpp ProcessGroupCCL.cpp ProcessGroupNCCL.cpp cpu/cpu_ccl.cpp dispatch_stub.cpp utils.cpp)
 add_library(torch_ccl SHARED ${CCL_SRCS})
 set_target_properties(torch_ccl PROPERTIES OUTPUT_NAME ${LIB_NAME})
 set_target_properties(torch_ccl PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -7,6 +7,7 @@ target_compile_options(torch_ccl PUBLIC -Wall
         -Wno-sign-compare
         -Wno-unused-function)
 
+include(FindNCCL)
 target_include_directories(torch_ccl PUBLIC ${ONECCL_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS} ${PYTORCH_INCLUDE_DIRS} ${IPEX_INCLUDE_DIRS} ./)
 
 get_target_property(mpi_lib mpi IMPORTED_LOCATION)
