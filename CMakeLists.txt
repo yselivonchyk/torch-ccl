@@ -30,11 +30,22 @@ SET(LIB_NAME "torch_ccl")
 
 #workaroud patch for oneCCL link issue
 find_package(Patch)
+find_package(CUDA REQUIRED)
 if(Patch_FOUND)
   message("Patch found: ${Patch_EXECUTABLE}")
 else()
   message(FATAL_ERROR, "Did not find patch")
 endif()
+
+include_directories(${CUDA_INCLUDE_DIRS})
+
+
+  find_package(Torch PATHS ${SITEARCH}/torch)
+  set(TORCH_INCLUDE_DIRS ${SITEARCH}/torch/include)
+  set(TORCH_LIBRARIES ${SITEARCH}/torch/lib/libc10.so ${SITEARCH}/torch/lib/libc10_cuda.so)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+
+
 set (patch_file "${CMAKE_CURRENT_SOURCE_DIR}/patches/Fix_the_link_path_issue_in_oneCCL.patch")
 execute_process(COMMAND ${Patch_EXECUTABLE} -p1 -i ${patch_file} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -68,4 +79,3 @@ function (print_configuration_summary)
 endfunction()
 
 print_configuration_summary()
-
